@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title> Pong </title>
+    <script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+    <link rel="stylesheet" src="stylesheet.css" />
+</head>
+
+<script>
+    async function start() {
+        sjs.open("target", 600, 600);
+        //ball & properties
+        var ball = new sjs.Image("Images/ball1.png");
+        ball.type = "ball";
+        ball.setSize(50, 50);
+        ball.center();
+        ball.friction = 0;
+        ball.bounce();
+        ball.pushRight(3);
+        ball.pushUp(4);
+        //paddles
+        //paddle 1
+        var paddle1 = new sjs.Image("Images/paddle.png");
+        paddle1.type = "paddle";
+        paddle1.setSize(100, 17);
+        paddle1.center().top();
+        paddle1.friction = .3;
+        //paddle2
+        var paddle2 = new sjs.Image("Images/paddle.png");
+        paddle2.type = "paddle";
+        paddle2.setSize(100, 17);
+        paddle2.center().bottom();
+        paddle2.friction = .3;
+        //key bindings
+        sjs.keyDown(LEFT_KEY, function () {
+            paddle1.pushLeft(3);
+            paddle2.pushLeft(3);
+        })
+        sjs.keyDown(RIGHT_KEY, function () {
+            paddle1.pushRight(3);
+            paddle2.pushRight(3);
+        })
+        //score
+        var score = 0;
+        var score_txt = new sjs.Text(`Score: ${score}`, 21, "orange");
+        //sounds
+        var se1 = new Audio("Music/techno.mp3");
+        var se2 = new Audio("Music/signal.mp3");
+        //onHit
+        sjs.onHit("ball", "paddle", function (ball, paddle) {
+            score = score + 1;
+            score_txt.setText("Score: " + score);
+            se1.play();
+            sjs.bounceOff(ball, paddle);
+            ball.scaleSpeed(1.015);
+        });
+        //sets the game to lose when the ball hits the top/bottom
+        ball.noBounds = true;
+        //functions
+        var d = new sjs.Text("", 113, "red");
+        sjs.onHit("ball", ["top_screen", "bottom_screen"], async function (ball) {
+            ball.destroy();
+            paddle1.destroy();
+            paddle2.destroy();
+            score_txt.setText("");
+            se2.play();
+            d.setText("Game Over");
+            var btn = new sjs.Button("Restart", function () {
+                location.reload();
+            }).center();
+        });
+    }
+</script>
+
+<body onload="start()">
+    <h1>
+        <center id="h">Pong Game</center>
+    </h1>
+    <hr />
+    <div id="target" style="margin:auto;background:black;"></div>
+    <hr />
+    <div id="et">
+
+    </div>
+</body>
+
+</html>
